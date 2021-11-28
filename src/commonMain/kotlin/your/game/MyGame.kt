@@ -55,6 +55,8 @@ class BadAnswerEvent : Event
 class StopMovingEvent : Event
 class StartMovingEvent : Event
 
+class TouchCoinEvent : Event
+
 @OptIn(ExperimentalStdlibApi::class)
 class MyGame(override val gameContext: GameContext) : Game {
 
@@ -118,7 +120,7 @@ class MyGame(override val gameContext: GameContext) : Game {
                 val entity = entityFactory.createFromNode(node)
                 entity.add(Cursor())
             } else {
-                entityFactory.createFromNode(node)
+                entityFactory.createFromNode(node).attachTo(parent)
             }
         }
     }

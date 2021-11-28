@@ -12,6 +12,7 @@ import your.game.GoodAnswerEvent
 import your.game.Player
 import your.game.StartMovingEvent
 import your.game.StopMovingEvent
+import your.game.TouchCoinEvent
 import your.game.systems.Constants.JUMP_HEIGHT
 import your.game.systems.Constants.PLAYER_SPEED
 import kotlin.math.cos
@@ -78,6 +79,8 @@ class PlayerSystem : StateMachineSystem(Player::class) {
 
         var y = 0f
 
+        var coinTouched = false
+
         override fun onEnter(entity: Entity) {
             // Set animation to jump
             entity.get(SpriteComponent::class).switchToAnimation("jump_up")
@@ -92,6 +95,11 @@ class PlayerSystem : StateMachineSystem(Player::class) {
             // When going down, switch to the fall animation
             if(currentY > entity.position.localTranslation.y) {
                 entity.get(SpriteComponent::class).switchToAnimation("jump_down")
+            }
+
+            if(t >= 0.3f && !coinTouched) { // touch coin
+                coinTouched = true
+                emit(TouchCoinEvent())
             }
 
             return if(entity.position.localTranslation.y < y) {
@@ -124,6 +132,10 @@ class PlayerSystem : StateMachineSystem(Player::class) {
             } else {
                 null
             }
+        }
+
+        override fun onExit(entity: Entity) {
+            emit(StartMovingEvent())
         }
     }
 

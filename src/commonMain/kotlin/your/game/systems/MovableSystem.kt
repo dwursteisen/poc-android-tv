@@ -16,7 +16,7 @@ class MovableSystem : StateMachineSystem(Movable::class) {
     override fun onGameStarted(engine: Engine) {
         super.onGameStarted(engine)
         entities.forEach {
-            it.position.setLocalTranslation(x = 5f)
+            it.position.setLocalTranslation(x = 10f)
         }
     }
 
@@ -45,7 +45,7 @@ class MovableSystem : StateMachineSystem(Movable::class) {
         override val nextMoveIsGoIn: Boolean = false
 
         override fun onEnter(entity: Entity) {
-            entity.position.setLocalTranslation(x = 5f)
+            entity.position.setLocalTranslation(x = 10f)
         }
 
         override fun onExit(entity: Entity) {

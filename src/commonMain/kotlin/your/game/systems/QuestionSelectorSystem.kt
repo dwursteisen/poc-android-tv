@@ -52,7 +52,7 @@ class QuestionSelectorSystem(var questions: List<Question>) : System(EntityQuery
             if(currentQuestion == null) {
                 TODO("End of the game!")
             } else {
-                questions = questions.drop(1)
+       //         questions = questions.drop(1)
                 currentQuestion?.run { emit(ShowQuestionEvent(this)) }
             }
         }

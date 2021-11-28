@@ -1,13 +1,17 @@
 package your.game.systems
 
 import com.github.dwursteisen.minigdx.Seconds
+import com.github.dwursteisen.minigdx.ecs.components.ModelComponent
 import com.github.dwursteisen.minigdx.ecs.components.SpriteComponent
 import com.github.dwursteisen.minigdx.ecs.entities.Entity
 import com.github.dwursteisen.minigdx.ecs.entities.position
+import com.github.dwursteisen.minigdx.ecs.events.Event
 import com.github.dwursteisen.minigdx.ecs.systems.EntityQuery
 import com.github.dwursteisen.minigdx.ecs.systems.System
 import com.github.dwursteisen.minigdx.math.Interpolations
 import your.game.Coin
+import your.game.NextQuestionEvent
+import your.game.TouchCoinEvent
 import kotlin.math.cos
 
 class CoinSystem : System(EntityQuery.of(Coin::class)) {
@@ -32,5 +36,17 @@ class CoinSystem : System(EntityQuery.of(Coin::class)) {
             z = 0f
 
         )
+    }
+
+    override fun onEvent(event: Event, entityQuery: EntityQuery?) {
+        if(event is TouchCoinEvent) {
+            entities.forEach {
+                it.get(ModelComponent::class).hidden = true
+            }
+        } else if(event is NextQuestionEvent) {
+            entities.forEach {
+                it.get(ModelComponent::class).hidden = false
+            }
+        }
     }
 }
