@@ -45,7 +45,7 @@ class CursorSystem : StateMachineSystem(Cursor::class) {
         // on event stop moving : show cursor
     }
 
-    inner class Select(val position: Float = FIRST_POSITION) : State() {
+    inner class Select(val position: Float = FIRST_POSITION, val firstAnswer: Boolean = true) : State() {
 
         val movables by interested(EntityQuery.Companion.of(Movable::class))
 
@@ -59,7 +59,7 @@ class CursorSystem : StateMachineSystem(Cursor::class) {
 
         override fun onEnter(entity: Entity) {
             entity.attachTo(movables.firstOrNull())
-            emit(SelectAnswerEvent(position == FIRST_POSITION))
+            emit(SelectAnswerEvent(firstAnswer))
             y = entity.position.localTranslation.y
         }
 
@@ -78,9 +78,9 @@ class CursorSystem : StateMachineSystem(Cursor::class) {
             }
 
             if (input.isKeyJustPressed(Key.ARROW_LEFT)) {
-                return Select(FIRST_POSITION)
+                return Select(FIRST_POSITION, true)
             } else if (input.isKeyJustPressed(Key.ARROW_RIGHT)) {
-                return Select(SECOND_POSITION)
+                return Select(SECOND_POSITION, false)
             }
             return null
         }

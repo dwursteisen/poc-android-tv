@@ -2,7 +2,6 @@ package your.game.systems
 
 import com.github.dwursteisen.minigdx.Seconds
 import com.github.dwursteisen.minigdx.ecs.Engine
-import com.github.dwursteisen.minigdx.ecs.components.StateMachineComponent
 import com.github.dwursteisen.minigdx.ecs.entities.Entity
 import com.github.dwursteisen.minigdx.ecs.events.Event
 import com.github.dwursteisen.minigdx.ecs.systems.EntityQuery
@@ -16,11 +15,13 @@ import your.game.Question
 import your.game.SelectAnswerEvent
 import your.game.ShowQuestionEvent
 
-class QuestionSelectorSystem(var questions: List<Question>) : System(EntityQuery.none()) {
+class QuestionSelectorSystem(questions: List<Question>) : System(EntityQuery.none()) {
 
     var currentQuestion: Question? = null
 
     var firstAnswer: Boolean = false
+
+    var questions = questions.shuffled()
 
     val cursor by interested(EntityQuery.of(Cursor::class))
 
@@ -36,7 +37,9 @@ class QuestionSelectorSystem(var questions: List<Question>) : System(EntityQuery
                 return
             }
 
-            if (currentQuestion?.firstLabelAnswer == true && firstAnswer) {
+            if ((currentQuestion?.firstLabelAnswer == true) and (firstAnswer)) {
+                emit(GoodAnswerEvent())
+            } else if ((currentQuestion?.firstLabelAnswer == false) and (!firstAnswer)) {
                 emit(GoodAnswerEvent())
             } else {
                 emit(BadAnswerEvent())
@@ -45,14 +48,14 @@ class QuestionSelectorSystem(var questions: List<Question>) : System(EntityQuery
     }
 
     override fun onEvent(event: Event, entityQuery: EntityQuery?) {
-        if(event is SelectAnswerEvent) {
+        if (event is SelectAnswerEvent) {
             firstAnswer = event.firstAnswer
-        } else if(event is NextQuestionEvent) {
+        } else if (event is NextQuestionEvent) {
             currentQuestion = questions.firstOrNull()
-            if(currentQuestion == null) {
+            if (currentQuestion == null) {
                 TODO("End of the game!")
             } else {
-       //         questions = questions.drop(1)
+                questions = questions.drop(1)
                 currentQuestion?.run { emit(ShowQuestionEvent(this)) }
             }
         }

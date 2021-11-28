@@ -10,11 +10,11 @@ import com.github.dwursteisen.minigdx.ecs.systems.EntityQuery
 import com.github.dwursteisen.minigdx.ecs.systems.System
 import com.github.dwursteisen.minigdx.math.Interpolations
 import your.game.Coin
+import your.game.CoinRotation
 import your.game.NextQuestionEvent
 import your.game.TouchCoinEvent
-import kotlin.math.cos
 
-class CoinSystem : System(EntityQuery.of(Coin::class)) {
+class CoinRotationSystem : System(EntityQuery.Companion.of(CoinRotation::class)) {
 
     override fun onEntityAdded(entity: Entity) {
         entity.get(SpriteComponent::class).switchToAnimation("coin")
@@ -23,10 +23,10 @@ class CoinSystem : System(EntityQuery.of(Coin::class)) {
     private val duration = 2f
 
     override fun update(delta: Seconds, entity: Entity) {
-        val coin = entity.get(Coin::class)
+        val coin = entity.get(CoinRotation::class)
         coin.t += delta
 
-        if(coin.t > duration) {
+        if (coin.t > duration) {
             coin.t -= duration
         }
 
@@ -37,13 +37,18 @@ class CoinSystem : System(EntityQuery.of(Coin::class)) {
 
         )
     }
+}
+
+class CoinSystem : System(EntityQuery.of(Coin::class)) {
+
+    override fun update(delta: Seconds, entity: Entity) = Unit
 
     override fun onEvent(event: Event, entityQuery: EntityQuery?) {
-        if(event is TouchCoinEvent) {
+        if (event is TouchCoinEvent) {
             entities.forEach {
                 it.get(ModelComponent::class).hidden = true
             }
-        } else if(event is NextQuestionEvent) {
+        } else if (event is NextQuestionEvent) {
             entities.forEach {
                 it.get(ModelComponent::class).hidden = false
             }
